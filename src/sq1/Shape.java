@@ -1,5 +1,6 @@
 package sq1;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.InvalidParameterException;
@@ -23,26 +24,28 @@ public class Shape {
      * correctly for this which is not considered in this alg.
      */
     private Algorithm cubeshapeAlg;
+    public final ShapeImage image;
 
     public static final int EDGE_PORTION = 1;
     public static final int CORNER_PORTION = 2;
     public static final int TOTAL_PARTS_PER_SIDE = 12;
 
-    protected Shape(String top, String bottom) {
+    protected Shape(String top, String bottom) throws IOException {
         this(top, bottom, Algorithm.EMPTY_ALGORITHM);
     }
 
-    protected Shape(String top, String bottom, Algorithm cubeshapeAlg) {
+    protected Shape(String top, String bottom, Algorithm cubeshapeAlg) throws IOException {
         this.top = top;
         this.bottom = bottom;
         this.cubeshapeAlg = cubeshapeAlg;
+        image = new ShapeImage(getShapeString());
     }
 
-    public Shape(String shape) {
+    public Shape(String shape) throws IOException {
         this(shape, Algorithm.EMPTY_ALGORITHM);
     }
 
-    public Shape(String shape, Algorithm cubeshapeAlg) {
+    public Shape(String shape, Algorithm cubeshapeAlg) throws IOException {
         if (shape.length() != 16) {
             throw new InvalidParameterException(
                     "Must be exactly 16 characters long and contain only 'c' and 'e', case does not matter.");
@@ -53,6 +56,7 @@ public class Shape {
         top = shape.substring(0, middle);
         bottom = shape.substring(middle);
         this.cubeshapeAlg = cubeshapeAlg;
+        image = new ShapeImage(getShapeString());
     }
 
     private static int getTopBottomBreakIndex(String shape) {
@@ -86,7 +90,7 @@ public class Shape {
     }
 
     public boolean isSameShape(Shape other, boolean considerMirror) {
-        boolean isSame = isRotation(top, other.top) && isRotation(bottom, other.bottom);
+        boolean isSame = other == null ? false : isRotation(top, other.top) && isRotation(bottom, other.bottom);
 
         if (considerMirror && !isSame) {
             isSame = isRotation(top, other.bottom) && isRotation(bottom, other.top);
@@ -98,7 +102,7 @@ public class Shape {
         return (s1.length() == s2.length()) && ((s1 + s1).contains(s2));
     }
 
-    public Shape mirror() {
+    public Shape mirror() throws IOException {
         return new Shape(bottom, top, cubeshapeAlg.mirror());
     }
 
@@ -141,9 +145,14 @@ public class Shape {
         if (obj == null) {
             return false;
         }
-        if (obj instanceof String && isSameShape(new Shape((String) obj))) {
-            return true;
+        try {
+            if (obj instanceof String && isSameShape(new Shape((String) obj))) {
+                return true;
+            }
+        } catch (IOException e) {
+            return false;
         }
+
         if (getClass() != obj.getClass()) {
             return false;
         }

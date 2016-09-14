@@ -45,8 +45,14 @@ public class FullCubeshapeWebpage {
             if (td.children().size() > 0) {
                 Map<String, String> queryMap = HTTP.getQueryMap(td.child(0).attr("src"));
                 String shapeString = queryMap.get("shapes");
-                if (shape.isSameShape(new Shape(shapeString), true)) {
-                    return td.text();
+                Shape shapeToCompare;
+                try {
+                    shapeToCompare = new Shape(shapeString);
+                    if (shape.isSameShape(shapeToCompare, true)) {
+                        return td.text();
+                    }
+                } catch (IOException e) {
+                    // do nothing, cannot be the same Shape
                 }
             }
         }
@@ -60,21 +66,19 @@ public class FullCubeshapeWebpage {
                 Map<String, String> queryMap = HTTP.getQueryMap(td.child(0).attr("src"));
                 String shapeString = queryMap.get("shapes");
                 if (shapeString != null) {
-                    Shape extractedShape = new Shape(shapeString);
-                    Algorithm extractedAlgorithm = new Algorithm(td.text());
-                    extractedShape.setCubeshapeAlg(extractedAlgorithm);
-                    complete.append(extractedShape.getShapeString());
-                    complete.append('=');
-                    complete.append(extractedShape.getCubeshapeAlg());
+                    Shape extractedShape;
+                    try {
+                        extractedShape = new Shape(shapeString);
+                        Algorithm extractedAlgorithm = new Algorithm(td.text());
+                        extractedShape.setCubeshapeAlg(extractedAlgorithm);
+                        complete.append(extractedShape.getShapeString());
+                        complete.append('=');
+                        complete.append(extractedShape.getCubeshapeAlg());
 
-                    // add the mirror after ;
-                    Shape mirroredShape = extractedShape.mirror();
-                    complete.append(';');
-                    complete.append(mirroredShape.getShapeString());
-                    complete.append('=');
-                    complete.append(mirroredShape.getCubeshapeAlg());
-
-                    complete.append('\n');
+                        complete.append('\n');
+                    } catch (IOException e) {
+                        System.err.println("Could not save shape and alg for " + shapeString);
+                    }
                 }
             }
         }

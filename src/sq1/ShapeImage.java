@@ -37,16 +37,35 @@ public class ShapeImage {
      * example, however an image does not have to follow the rules with a max.
      * of 16 'c' and 'e', it can contain more or less. Less will construct an
      * incomplete shape image and more is defined by the tool from
-     * {@link http://andrewknelson.com}.
+     * <a href="http://andrewknelson.com">http://andrewknelson.com</a>.
+     * 
+     * If the image already exists in the {@link #SHAPE_IMAGE_DIR} then it is
+     * loaded from there, otherwise from
+     * <a href="http://andrewknelson.com">http://andrewknelson.com</a>.
      * 
      * @param shapeString
      *            consisting of 'c' and 'e' to describe a Square-1 shape
-     * @throws IOException
      */
     public ShapeImage(String shape) throws IOException {
         this(getShapeURL(shape));
     }
 
+    /**
+     * Constructs a shape image on an existing URL from
+     * <a href="http://andrewknelson.com">http://andrewknelson.com</a>. See
+     * {@link Shape} for a description and an example for the {@code shapes=}
+     * argument in the URL, however an image does not have to follow the rules
+     * with a max. of 16 'c' and 'e', it can contain more or less. Less will
+     * construct an incomplete shape image and more is defined by the tool from
+     * <a href="http://andrewknelson.com">http://andrewknelson.com</a>.
+     * 
+     * If the image already exists in the {@link #SHAPE_IMAGE_DIR} then it is
+     * loaded from there, otherwise from
+     * <a href="http://andrewknelson.com">http://andrewknelson.com</a>.
+     * 
+     * @param shapeString
+     *            consisting of 'c' and 'e' to describe a Square-1 shape
+     */
     public ShapeImage(URL shapeURL) throws IOException {
         this.shapeURL = shapeURL;
 
@@ -58,6 +77,7 @@ public class ShapeImage {
             image = ImageIO.read(shapeImageOnFS);
         } else {
             image = getImage(shapeURL);
+            ImageIO.write(image, "png", shapeImageOnFS);
         }
     }
 
@@ -76,16 +96,16 @@ public class ShapeImage {
         return new URL(SHAPE_IMAGE_URL + shape.getShapeString());
     }
 
-    public static URL getShapeURLForMirror(URL existing) throws MalformedURLException {
+    public static URL getShapeURLForMirror(URL existing) throws IOException {
         Map<String, String> existingParameters = HTTP.getQueryMap(existing.getQuery());
         return getShapeURLForMirror(existingParameters.get("shapes"));
     }
 
-    public static URL getShapeURLForMirror(String shape) throws MalformedURLException {
+    public static URL getShapeURLForMirror(String shape) throws IOException {
         return getShapeURLForMirror(new Shape(shape));
     }
 
-    public static URL getShapeURLForMirror(Shape shape) throws MalformedURLException {
+    public static URL getShapeURLForMirror(Shape shape) throws IOException {
         String mirroredShape = shape.mirror().getShapeString();
         return new URL(SHAPE_IMAGE_URL + mirroredShape);
     }
