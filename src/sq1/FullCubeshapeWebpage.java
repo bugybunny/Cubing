@@ -1,5 +1,7 @@
 package sq1;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,7 +36,7 @@ public class FullCubeshapeWebpage {
         for (Element td : tds) {
             if (td.text().equals(alg.toString()) && td.children().size() > 0) {
                 Map<String, String> queryMap = HTTP.getQueryMap(td.child(0).attr("src"));
-                return new Shape(queryMap.get("shapes"));
+                return new Shape(queryMap.get("shapes"), alg);
             }
         }
         return null;
@@ -104,12 +106,18 @@ public class FullCubeshapeWebpage {
         return tds;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         FullCubeshapeWebpage site = new FullCubeshapeWebpage();
 
-        Shape shape = new Shape(KnownShape.BARREL.getShape() + KnownShape.LEFT_FIST.getShape());
-        java.net.URL shapeURL = ShapeImage.getShapeURL(shape);
-        System.out.println(shapeURL);
+        Shape originalShape = site.getShapeForAlg(new Algorithm("/-3,2/-4,0/0,1/3,3/"));
+
+        Shape mirror = originalShape.mirror();
+        java.net.URL shapeURL = ShapeImage.getShapeURL(mirror);
         ShapeImage.copyShapeImageToClipboard(shapeURL);
+        Toolkit.getDefaultToolkit().beep();
+        Thread.sleep(1300);
+        Toolkit.getDefaultToolkit().beep();
+        Toolkit.getDefaultToolkit().getSystemClipboard()
+                .setContents(new StringSelection(mirror.getCubeshapeAlg().toString()), null);
     }
 }

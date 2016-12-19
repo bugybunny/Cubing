@@ -1,5 +1,6 @@
 package sq1;
 
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
@@ -20,9 +21,9 @@ import util.ImageSelection;
 public class ShapeImage {
 
     public static final File SHAPE_IMAGE_DIR = new File("images");
-    public static final int IMAGE_SIZE = 500;
-    public static final String SHAPE_IMAGE_URL = "http://andrewknelson.com/imsq.php?size=" + IMAGE_SIZE
-            + "&stickers=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&shapes=";
+    public static final int IMAGE_DOWNLOAD_SIZE = 100;
+    public static final String SHAPE_IMAGE_URL = "http://andrewknelson.com/imsq.php?stickers=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&size="
+            + IMAGE_DOWNLOAD_SIZE + "&shapes=";
 
     static {
         SHAPE_IMAGE_DIR.mkdirs();
@@ -39,6 +40,11 @@ public class ShapeImage {
      * incomplete shape image and more is defined by the tool from
      * <a href="http://andrewknelson.com">http://andrewknelson.com</a>.
      * 
+     * <br/>
+     * This uses the default size {@value #IMAGE_DOWNLOAD_SIZE}px from
+     * {@link #IMAGE_DOWNLOAD_SIZE} and does not resize the image.
+     * 
+     * <br/>
      * If the image already exists in the {@link #SHAPE_IMAGE_DIR} then it is
      * loaded from there, otherwise from
      * <a href="http://andrewknelson.com">http://andrewknelson.com</a>.
@@ -47,7 +53,27 @@ public class ShapeImage {
      *            consisting of 'c' and 'e' to describe a Square-1 shape
      */
     public ShapeImage(String shape) throws IOException {
-        this(getShapeURL(shape));
+        this(getShapeURL(shape), IMAGE_DOWNLOAD_SIZE);
+    }
+
+    /**
+     * Constructs a shape image. See {@link Shape} for a description and an
+     * example, however an image does not have to follow the rules with a max.
+     * of 16 'c' and 'e', it can contain more or less. Less will construct an
+     * incomplete shape image and more is defined by the tool from
+     * <a href="http://andrewknelson.com">http://andrewknelson.com</a>.
+     * 
+     * If the image already exists in the {@link #SHAPE_IMAGE_DIR} then it is
+     * loaded from there, otherwise from
+     * <a href="http://andrewknelson.com">http://andrewknelson.com</a>.
+     * 
+     * @param shapeString
+     *            consisting of 'c' and 'e' to describe a Square-1 shape
+     * @param size
+     *            size of the image in pixels
+     */
+    public ShapeImage(String shape, int size) throws IOException {
+        this(getShapeURL(shape), size);
     }
 
     /**
@@ -59,6 +85,11 @@ public class ShapeImage {
      * construct an incomplete shape image and more is defined by the tool from
      * <a href="http://andrewknelson.com">http://andrewknelson.com</a>.
      * 
+     * <br/>
+     * This uses the default size {@value #IMAGE_DOWNLOAD_SIZE}px from
+     * {@link #IMAGE_DOWNLOAD_SIZE} and does not resize the image.
+     * 
+     * <br/>
      * If the image already exists in the {@link #SHAPE_IMAGE_DIR} then it is
      * loaded from there, otherwise from
      * <a href="http://andrewknelson.com">http://andrewknelson.com</a>.
@@ -67,18 +98,58 @@ public class ShapeImage {
      *            consisting of 'c' and 'e' to describe a Square-1 shape
      */
     public ShapeImage(URL shapeURL) throws IOException {
+        this(shapeURL, IMAGE_DOWNLOAD_SIZE);
+    }
+
+    /**
+     * Constructs a shape image on an existing URL from
+     * <a href="http://andrewknelson.com">http://andrewknelson.com</a>. See
+     * {@link Shape} for a description and an example for the {@code shapes=}
+     * argument in the URL, however an image does not have to follow the rules
+     * with a max. of 16 'c' and 'e', it can contain more or less. Less will
+     * construct an incomplete shape image and more is defined by the tool from
+     * <a href="http://andrewknelson.com">http://andrewknelson.com</a>.
+     * 
+     * <br/>
+     * If the image already exists in the {@link #SHAPE_IMAGE_DIR} then it is
+     * loaded from there, otherwise from
+     * <a href="http://andrewknelson.com">http://andrewknelson.com</a>.
+     * 
+     * @param shapeString
+     *            consisting of 'c' and 'e' to describe a Square-1 shape
+     * @param size
+     *            size of the image in pixels
+     */
+    public ShapeImage(URL shapeURL, int size) throws IOException {
         this.shapeURL = shapeURL;
 
         Map<String, String> queryMap = HTTP.getQueryMap(shapeURL.toExternalForm());
         shape = queryMap.get("shapes");
 
         File shapeImageOnFS = new File(SHAPE_IMAGE_DIR, shape + ".png");
+        BufferedImage tempImage;
         if (shapeImageOnFS.exists()) {
-            image = ImageIO.read(shapeImageOnFS);
+            tempImage = ImageIO.read(shapeImageOnFS);
         } else {
-            image = getImage(shapeURL);
-            ImageIO.write(image, "png", shapeImageOnFS);
+            tempImage = getImage(shapeURL);
+            ImageIO.write(tempImage, "png", shapeImageOnFS);
         }
+
+        image = getScaled(tempImage, size);
+    }
+
+    public static BufferedImage getScaled(BufferedImage original, int size) {
+        BufferedImage scaled = original;
+        if (original.getHeight(null) != size) {
+            Image img = original.getScaledInstance(2 * size, size, Image.SCALE_SMOOTH);
+            scaled = new BufferedImage(2 * size, size, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = scaled.createGraphics();
+            g.drawImage(img, 0, 0, null);
+            if (g != null) {
+                g.dispose();
+            }
+        }
+        return scaled;
     }
 
     /**

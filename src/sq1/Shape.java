@@ -10,12 +10,12 @@ import java.security.InvalidParameterException;
  * ccw direction.
  * 
  * Example: eeeeeecececccccc results in top='eeeeeecece' and bottom='cccccc'.
- * Calling {@link #mirror()} in the full shape to be 'cccccceeeeeecece'.
+ * Calling {@link #mirror()} in the full shape results in 'cccccceeeeeecece'.
  * 
  * @author <marco.syfrig@gmail.com>
  */
 public class Shape {
-    public static final Path SHAPE_FILE = Paths.get("shapes_from_website_plus_mirrors.txt");
+    public static final Path SHAPE_FILE = Paths.get("shapes_from_website.txt");
 
     public final String top;
     public final String bottom;
@@ -104,6 +104,36 @@ public class Shape {
 
     public Shape mirror() throws IOException {
         return new Shape(bottom, top, cubeshapeAlg.mirror());
+    }
+
+    /**
+     * TODO not tested yet
+     */
+    public Shape turnTop(int moveBy) throws IOException {
+        int topLength = top.length();
+        String newTop = top;
+        if (moveBy > 0) {
+            newTop = (top + top).substring(moveBy, moveBy + topLength);
+        } else if (moveBy < 0) {
+            newTop = (top + top).substring(topLength + moveBy, (topLength * 2) + moveBy);
+        }
+
+        return new Shape(newTop, bottom);
+    }
+
+    /**
+     * TODO not tested yet
+     */
+    public Shape turnBottom(int moveBy) throws IOException {
+        int bottomLength = bottom.length();
+        String newBottom = bottom;
+        if (moveBy > 0) {
+            newBottom = (bottom + bottom).substring(moveBy, moveBy + bottomLength);
+        } else if (moveBy < 0) {
+            newBottom = (bottom + bottom).substring(bottomLength + moveBy, (bottomLength * 2) + moveBy);
+        }
+
+        return new Shape(top, newBottom);
     }
 
     public Algorithm getCubeshapeAlg() {
