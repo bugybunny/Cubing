@@ -2,7 +2,6 @@ package sq1;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -186,11 +185,6 @@ public class ShapeImage {
     }
 
     public static void copyShapeImageToClipboard(URL shapeImageURL) throws IOException {
-        setClipboard(getImage(shapeImageURL));
-    }
-
-    public static void setClipboard(Image image) {
-        ImageSelection imgSelection = new ImageSelection(image);
-        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(imgSelection, null);
+        ImageSelection.setClipboard(getImage(shapeImageURL));
     }
 }

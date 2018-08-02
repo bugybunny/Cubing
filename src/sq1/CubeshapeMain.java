@@ -12,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import util.ImageSelection;
 
 public class CubeshapeMain extends Application {
     private Map<Shape, Algorithm> shapeToAlg = new HashMap<>(125);
@@ -68,7 +69,7 @@ public class CubeshapeMain extends Application {
         if (shape != null) {
             try {
                 Shape mirror = shape.mirror();
-                ShapeImage.setClipboard(mirror.image.image);
+                ImageSelection.setClipboard(mirror.image.image);
             } catch (IOException e) {
                 System.err.println("Could not mirror shape " + shape + ".");
                 e.printStackTrace();

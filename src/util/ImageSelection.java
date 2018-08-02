@@ -1,6 +1,7 @@
 package util;
 
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -36,5 +37,10 @@ public class ImageSelection implements Transferable {
             throw new UnsupportedFlavorException(flavor);
         }
         return image;
+    }
+
+    public static void setClipboard(Image image) {
+        ImageSelection imgSelection = new ImageSelection(image);
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(imgSelection, null);
     }
 }
