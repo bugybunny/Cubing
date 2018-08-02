@@ -6,6 +6,9 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.WritableImage;
 
+/**
+ * Represents a drawable area with two canvases that can be easily converted to a {@link BufferedImage}.
+ */
 public class CanvasImage {
     private final Canvas topCanvas;
     private final Canvas bottomCanvas;
@@ -37,7 +40,10 @@ public class CanvasImage {
         return bottomImage;
     }
 
-    public BufferedImage getCombinedImage() {
+    /**
+     * Returns a combined image of the two canvases with the top canvas on the left and the bottom one on the right.
+     */
+    public BufferedImage getCombinedVerticalImage() {
         if (image == null) {
             image = new BufferedImage((int) (getTopImage().getWidth() + getBottomImage().getWidth()), (int) (getTopImage().getHeight()), BufferedImage.TYPE_INT_ARGB);
             image.getGraphics().drawImage(getTopImage(), 0, 0, null);

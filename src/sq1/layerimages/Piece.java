@@ -2,6 +2,9 @@ package sq1.layerimages;
 
 import javafx.scene.paint.Color;
 
+/**
+ * Represents a single detachable piece from a Square-1 that can be drawn. Can represent an edge or corner.
+ */
 public class Piece {
     enum Position {
         BL, B(true), BR, R(true), FR, F(true), FL, L(true);

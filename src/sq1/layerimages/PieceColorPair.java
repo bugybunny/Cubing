@@ -4,6 +4,18 @@ import java.util.List;
 
 import javafx.scene.paint.Color;
 
+/**
+ * Represents a string of the form <code>UBR={red,green}</code>. It parses the representing string, checks for errors
+ * and if present throws a {@link PieceToColorParseException} and if everything is correct, sets the colors in the
+ * {@link Piece}.
+ * 
+ * Checks if
+ * <ul>
+ * <li>exactly one equals sign ({@literal =}) is present</li>
+ * <li>the first part (before the equal sign) is a valid {@link Piece}</li>
+ * <li>all entries in the curly braces are comma separated and represent a valid {@link ColorScheme#COLORS}
+ * </ul>
+ */
 public class PieceColorPair {
     private Piece piece;
 

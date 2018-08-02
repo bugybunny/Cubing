@@ -58,7 +58,7 @@ public class SecondBlockImageCreator extends Application {
         buttonSave.setMnemonicParsing(true);
 
         text = new ColorPairTextField("UBR={red, green}; UR={green}; UFR={green, orange}");
-        text.setPromptText("DFL={red, blue}; DL={blue}; DBL={blue, orange}");
+        text.setPromptText("DFL={red, blue}; DL={blue}; DBL={blue, orange}"); // prefilled example
         text.setPrefWidth(400);
         Button buttonRepaint = new Button("_Repaint");
         buttonRepaint.setDefaultButton(true);
@@ -80,7 +80,7 @@ public class SecondBlockImageCreator extends Application {
 
         top.setRotate(30);
         top.getTransforms().add(new Translate(30, 3));
-        // invert y for bottom to get this stupid x2 look -.-
+        // invert y for bottom to get the x2 and not z2 look for the D layer that other users requested
         bottom.getTransforms().add(new Scale(1, -1));
         bottom.getTransforms().add(new Translate(30, -bottom.getHeight()));
         bottom.setRotate(30);
@@ -119,13 +119,13 @@ public class SecondBlockImageCreator extends Application {
         String colorText = text.getText() + ";DFL={red, blue}; DL={blue}; DBL={blue, orange}";
 
         GraphicsContext topGC = top.getGraphicsContext2D();
-        drawLayer(topGC, startX, startY, colorText, Piece.Layer.U);
+        drawSingleLayer(topGC, startX, startY, colorText, Piece.Layer.U);
         drawSlice(topGC, startX + CORNER_LENGTH, startY, startX + CORNER_LENGTH + EDGE_LENGTH, startY + SIDE_LENGTH);
 
         startX = 10;
         startY = 10;
         GraphicsContext bottomGC = bottom.getGraphicsContext2D();
-        drawLayer(bottomGC, startX, startY, colorText, Piece.Layer.D);
+        drawSingleLayer(bottomGC, startX, startY, colorText, Piece.Layer.D);
         drawSlice(bottomGC, startX + CORNER_LENGTH + EDGE_LENGTH, startY, startX + CORNER_LENGTH, startY + SIDE_LENGTH);
     }
 
@@ -144,7 +144,7 @@ public class SecondBlockImageCreator extends Application {
         }
     }
 
-    private void drawLayer(GraphicsContext gc, int startX, int startY, String inputColorText, Piece.Layer layer) {
+    private void drawSingleLayer(GraphicsContext gc, int startX, int startY, String inputColorText, Piece.Layer layer) {
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(1);
         List<Piece> pieces = createPiecesForLayer(layer, startX, startY);
@@ -196,6 +196,8 @@ public class SecondBlockImageCreator extends Application {
     }
 
     private static List<Piece> createPiecesForLayer(Piece.Layer layer, int startX, int startY) {
+        // could be done more programmatically but since there are only 8 pieces this is much more readable. The logic
+        // would not be that easy to understand with a lot of if/else
         List<Piece> pieces = new ArrayList<>(8);
 
         Piece bl = new Piece(new double[] { startX, startX, startX + CORNER_LENGTH, startX + MIDDLE }, new double[] { startY + CORNER_LENGTH, startY, startY, startY + MIDDLE },

@@ -47,7 +47,7 @@ public class SaveImageAction implements EventHandler<ActionEvent> {
         if (file != null) {
             try {
                 CanvasImage canvasImage = new CanvasImage(top, bottom);
-                BufferedImage combinedImage = canvasImage.getCombinedImage();
+                BufferedImage combinedImage = canvasImage.getCombinedVerticalImage();
 
                 ImageIO.write(combinedImage, "png", file);
                 ImageSelection.setClipboard(combinedImage);

@@ -12,6 +12,11 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
+/**
+ * Display Android-like toast messages with JavaFX.
+ * 
+ * Taken from https://stackoverflow.com/a/38373408/4040068 with a few changes by Marco Syfrig.
+ */
 public final class Toast {
     public static void makeText(String toastMsg) {
         makeText(null, toastMsg, 5000, 500, 500);
@@ -44,7 +49,6 @@ public final class Toast {
                 try {
                     Thread.sleep(toastDelay);
                 } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
                 Timeline fadeOutTimeline = new Timeline();
