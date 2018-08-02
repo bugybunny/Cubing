@@ -7,6 +7,10 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 
+/**
+ * Textfield that is aware of the content in the form of {@link PieceColorPair} separated by {@code ;}, e.g.
+ * <code>UBR={red, green}; UR={green}; UFR={green, orange}</code>
+ */
 public class ColorPairTextField extends TextField {
 
     private static final KeyCombination reverseShortcut = new KeyCodeCombination(KeyCode.R, KeyCombination.SHORTCUT_DOWN);
@@ -193,17 +197,6 @@ public class ColorPairTextField extends TextField {
 
     private static int findNextIndexOf(String str, int startIndex, char c1, char c2) {
         for (int i = startIndex; i < str.length(); i++) {
-            char c = str.charAt(i);
-            if (c == c1 || c == c2) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
-    private static int findLastIndexOf(String str, int startIndex, char c1, char c2) {
-        for (int i = startIndex; i >= 0; i--) {
             char c = str.charAt(i);
             if (c == c1 || c == c2) {
                 return i;
